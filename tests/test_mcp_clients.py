@@ -1004,6 +1004,27 @@ async def test_direct_python_tool_cleanup_request_tolerates_delete_failure():
     assert "req-x" not in tool.requests_to_sessions
 
 
+# -- CoolProp direct tool tests ---------------------------------------------
+
+
+class TestCoolPropTool:
+    def test_coolprop_tool_config(self):
+        from nemo_skills.mcp.servers.coolprop_tool import CoolPropTool
+
+        tool = CoolPropTool()
+        assert tool.default_config() == {}
+
+    @pytest.mark.asyncio
+    async def test_coolprop_direct_list_tools(self):
+        from nemo_skills.mcp.servers.coolprop_tool import CoolPropTool
+
+        tool = CoolPropTool()
+        tool.configure()
+        tool_names = {t["name"] for t in await tool.list_tools()}
+        assert "fluid-property" in tool_names
+        assert "fluid-list" in tool_names
+
+
 # -- Wikipedia direct tool tests --------------------------------------------
 
 
