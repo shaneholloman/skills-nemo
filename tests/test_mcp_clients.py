@@ -1004,6 +1004,35 @@ async def test_direct_python_tool_cleanup_request_tolerates_delete_failure():
     assert "req-x" not in tool.requests_to_sessions
 
 
+# -- Particle direct tool tests ---------------------------------------------
+
+
+class TestParticleTool:
+    def test_particle_tool_config(self):
+        from nemo_skills.mcp.servers.particle_tool import ParticleTool
+
+        tool = ParticleTool()
+        assert tool.default_config() == {}
+
+    @pytest.mark.asyncio
+    async def test_particle_direct_list_tools(self):
+        from nemo_skills.mcp.servers.particle_tool import ParticleTool
+
+        tool = ParticleTool()
+        tool.configure()
+        tool_names = {t["name"] for t in await tool.list_tools()}
+        assert "particle-lookup" in tool_names
+        assert "particle-search" in tool_names
+
+    @pytest.mark.asyncio
+    async def test_particle_tool_rejects_extra_args(self):
+        from nemo_skills.mcp.servers.particle_tool import ParticleTool
+
+        tool = ParticleTool()
+        with pytest.raises(ValueError, match="does not support extra_args"):
+            await tool.execute("particle-search", {"query": "pi"}, extra_args={"unused": True})
+
+
 # -- Periodictable direct tool tests ----------------------------------------
 
 
